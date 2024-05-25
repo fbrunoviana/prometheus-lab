@@ -12,7 +12,7 @@ services:
   prometheus:
     image: prom/prometheus:v2.36.2
     volumes:
-      - ./prometheus/:/etc/prometheus/
+      - ../../prometheus/:/etc/prometheus/
       - prometheus_data:/prometheus
     command:
       - '--config.file=/etc/prometheus/prometheus.yml'
@@ -60,7 +60,7 @@ services:
     ports:
       - 9093:9093
     volumes:
-      - "./alertmanager/:/etc/alertmanager/"
+      - "../../alertmanager/:/etc/alertmanager/"
     networks:
       - monitor-net
     command:
@@ -97,9 +97,9 @@ services:
       - 3000:3000
     volumes:
       - grafana_data:/var/lib/grafana
-      - ./grafana/provisioning/:/etc/grafana/provisioning/
+      - ../../grafana/provisioning/:/etc/grafana/provisioning/
     env_file:
-      - ./grafana/config.monitoring
+      - ../../grafana/config.monitoring
     networks:
       - monitor-net
     user: "472"
@@ -110,3 +110,18 @@ services:
       restart_policy:
         condition: on-failure
 
+  wildfly:
+    image: quay.io/wildfly/wildfly:latest
+    command: ["/opt/jboss/wildfly/bin/standalone.sh", "-b", "0.0.0.0", "-bmanagement", "0.0.0.0"]
+    ports:
+      - 8081:8080
+      - 9990:9990
+    networks:
+      - monitor-net
+
+    deploy:
+      placement:
+        constraints:
+          - node.role==manager
+      restart_policy:
+        condition: on-failure
