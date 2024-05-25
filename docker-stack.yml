@@ -117,8 +117,6 @@ services:
       - 9990:9990
     volumes:
       - ./wildfly/standalone/configuration/:/opt/jboss/wildfly/standalone/configuration/
-    environment:
-      - JAVA_OPTS=-javaagent:/opt/jboss/wildfly/standalone/configuration/wildfly-exporter.jar
     networks:
       - monitor-net
     deploy:
